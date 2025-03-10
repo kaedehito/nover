@@ -169,7 +169,7 @@ class YesNoPrompt(private val plugin: Plugin) {
         val factory = ConversationFactory(plugin)
             .withFirstPrompt(object : StringPrompt() {
                 override fun getPromptText(context: ConversationContext): String {
-                    return "§eはい/いいえを入力してください（yes/no）"
+                    return "§e本当にモデレーターを削除しますか？（yes/no）"
                 }
 
                 override fun acceptInput(context: ConversationContext, input: String?): Prompt? {
