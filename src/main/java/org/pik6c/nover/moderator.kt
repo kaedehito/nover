@@ -51,7 +51,7 @@ abstract class Moderator : CommandExecutor {
 
                 // モデレーターの追加
                 parsed += Ops(
-                    uuid = Bukkit.getPlayer(user)?.uniqueId.toString(), // ダミーの UUID
+                    uuid = Bukkit.getPlayer(user)?.uniqueId.toString(),
                     name = user,  // ユーザー名
                     level = 2,  // モデレーターのレベル
                     bypassesPlayerLimit = true // プレイヤー制限を回避するか
