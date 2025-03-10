@@ -6,3 +6,11 @@ commands:
   nv:
     description: "noverの設定コマンド"
     usage: "/nv [help]"
+    permission: noverop.use
+
+
+permissions:
+  noverop.use:
+    description: "Noverを使用してサーバーに直に影響するコマンドを実行できる権限"
+    default: op
+
