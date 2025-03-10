@@ -1,0 +1,8 @@
+name: nover
+version: '1.0-SNAPSHOT'
+main: org.pik6c.nover.Nover
+api-version: '1.21'
+commands:
+  nv:
+    description: "noverの設定コマンド"
+    usage: "/nv [help]"
