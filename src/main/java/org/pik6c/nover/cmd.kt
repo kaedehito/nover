@@ -38,6 +38,11 @@ class NvCommand(private val plugin: Plugin) : CommandExecutor {
             }
 
             "moderator" -> {
+                // オペレーターではなかった場合、実行させない
+                if (!sender.isOp){
+                    sender.sendMessage("${ChatColor.RED}${ChatColor.BOLD}このコマンドを実行する権限がありません！");
+                    return true;
+                }
                 if (args.size >= 2) {
                     when (args[1].lowercase()) {
                         "add" -> {
