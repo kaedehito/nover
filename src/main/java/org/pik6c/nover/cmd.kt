@@ -1,4 +1,5 @@
 package org.pik6c.nover
+import kotlinx.serialization.EncodeDefault
 import org.bukkit.Bukkit
 import org.pik6c.nover.Moderator;
 import org.bukkit.ChatColor
@@ -65,6 +66,10 @@ class NvCommand(private val plugin: Plugin) : CommandExecutor , TabCompleter{
                                 sender.sendMessage("${ChatColor.GREEN}${ChatColor.BOLD}ヘルプ: ${ChatColor.RESET}");
                                 sender.sendMessage("${ChatColor.YELLOW}/nv moderator remove ${ChatColor.AQUA}<user>${ChatColor.WHITE} - 指定したユーザーからモデレーター権限を消去します")
                             }
+                        }
+
+                        "list" -> {
+                            Moderator.listsModerator(sender)
                         }
 
                         else -> {

@@ -50,9 +50,9 @@ abstract class Moderator : CommandExecutor {
 
                 // モデレーターの追加
                 parsed += Ops(
-                    uuid = Bukkit.getPlayer(user)?.uniqueId.toString(), // ダミーの UUID
+                    uuid = Bukkit.getPlayer(user)?.uniqueId.toString(),
                     name = user,  // ユーザー名
-                    level = 2,  // モデレーターのレベル
+                    level = 1,  // モデレーターのレベル
                     bypassesPlayerLimit = true // プレイヤー制限を回避するか
                 )
 
@@ -155,7 +155,17 @@ abstract class Moderator : CommandExecutor {
 
 
         }
+
+        public fun listsModerator(sender: CommandSender){
+            val file = File("./ops.json").readText()
+            val parsed = Json.decodeFromString<List<Ops>>(file)
+
+            for (p in parsed){
+                sender.sendMessage("${ChatColor.GREEN}${p.name}  ${ChatColor.YELLOW}level: ${ChatColor.AQUA}${p.level}");
+            }
+        }
     }
+
 
 }
 
