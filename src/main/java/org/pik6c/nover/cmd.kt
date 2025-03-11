@@ -80,10 +80,17 @@ class NvCommand(private val plugin: Plugin) : CommandExecutor {
                 }
             }
 
+            "version" -> {
+                sender.sendMessage("${ChatColor.AQUA}Nover ${ChatColor.YELLOW}v1.0${ChatColor.GRAY} PRE-RELEASE");
+                sender.sendMessage("${ChatColor.DARK_AQUA}NoverはMIT Licenseでライセンスされています");
+
+            }
+
             else -> {
                 sender.sendMessage("${ChatColor.RED}不明な引数です: ${args[0]}")
             }
         }
+
         return true
     }
 }

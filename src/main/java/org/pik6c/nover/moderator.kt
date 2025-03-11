@@ -28,7 +28,6 @@ abstract class Moderator : CommandExecutor {
             try {
                 // ファイル内容を読み込む
                 val fileContent = file.readText()
-                println("[debug] $fileContent")
 
                 // JSON をデコード
                 val parsed = Json.decodeFromString<MutableList<Ops>>(fileContent)
@@ -51,7 +50,7 @@ abstract class Moderator : CommandExecutor {
 
                 // モデレーターの追加
                 parsed += Ops(
-                    uuid = Bukkit.getPlayer(user)?.uniqueId.toString(),
+                    uuid = Bukkit.getPlayer(user)?.uniqueId.toString(), // ダミーの UUID
                     name = user,  // ユーザー名
                     level = 2,  // モデレーターのレベル
                     bypassesPlayerLimit = true // プレイヤー制限を回避するか
@@ -60,7 +59,6 @@ abstract class Moderator : CommandExecutor {
                 // JSON 文字列にエンコード
                 val json = Json { prettyPrint = true }
                 val updatedJson = json.encodeToString(parsed);
-                println("ops.json is update to : " + updatedJson);
 
                 // ファイルに書き込む
                 file.writeText(updatedJson)  // 上書き保存
@@ -83,7 +81,6 @@ abstract class Moderator : CommandExecutor {
             try {
                 // ファイル内容を読み込む
                 val fileContent = file.readText()
-                println("[debug] $fileContent")
 
                 // JSON をデコード
                 val parsed = Json.decodeFromString<MutableList<Ops>>(fileContent)
@@ -126,7 +123,6 @@ abstract class Moderator : CommandExecutor {
                 // JSON 文字列にエンコード
                 val json = Json { prettyPrint = true }
                 val updatedJson = json.encodeToString(parsed)
-                println("ops.json is update to : " + updatedJson)
 
                 // ファイルに書き込む
                 file.writeText(updatedJson)  // 上書き保存
@@ -169,7 +165,7 @@ class YesNoPrompt(private val plugin: Plugin) {
         val factory = ConversationFactory(plugin)
             .withFirstPrompt(object : StringPrompt() {
                 override fun getPromptText(context: ConversationContext): String {
-                    return "§e本当にモデレーターを削除しますか？（yes/no）"
+                    return "§eはい/いいえを入力してください（yes/no）"
                 }
 
                 override fun acceptInput(context: ConversationContext, input: String?): Prompt? {
