@@ -12,7 +12,9 @@ class Nover : JavaPlugin() {
         logger.info("/nv help to get started");
         getCommand("nv")?.setExecutor(NvCommand(this));
         getCommand("nv")?.tabCompleter = NvCommand(this);
+        getCommand("nv")?.aliases = mutableListOf("nover");
 
+        server.pluginManager.registerEvents(ChatListener(), this)
     }
 
     override fun onDisable() {

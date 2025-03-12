@@ -16,6 +16,14 @@ import java.io.IOException
 
 abstract class Moderator : CommandExecutor {
     companion object {
+        @Serializable
+        public data class Ops(
+            val uuid: String,
+            val name: String,
+            val level: Int,
+            val bypassesPlayerLimit: Boolean
+        )
+
         fun addModerator(user: String, sender: CommandSender) {
             val file = File("./ops.json")
 
@@ -207,7 +215,7 @@ class YesNoPrompt(private val plugin: Plugin) {
 
 
 @Serializable
-data class Ops(
+public data class Ops(
     val uuid: String,
     val name: String,
     val level: Int,
