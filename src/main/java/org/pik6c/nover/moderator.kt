@@ -16,6 +16,14 @@ import java.io.IOException
 
 abstract class Moderator : CommandExecutor {
     companion object {
+        @Serializable
+        public data class Ops(
+            val uuid: String,
+            val name: String,
+            val level: Int,
+            val bypassesPlayerLimit: Boolean
+        )
+
         fun addModerator(user: String, sender: CommandSender) {
             val file = File("./ops.json")
 
@@ -50,9 +58,9 @@ abstract class Moderator : CommandExecutor {
 
                 // モデレーターの追加
                 parsed += Ops(
-                    uuid = Bukkit.getPlayer(user)?.uniqueId.toString(), // ダミーの UUID
+                    uuid = Bukkit.getPlayer(user)?.uniqueId.toString(),
                     name = user,  // ユーザー名
-                    level = 2,  // モデレーターのレベル
+                    level = 1,  // モデレーターのレベル
                     bypassesPlayerLimit = true // プレイヤー制限を回避するか
                 )
 
@@ -155,7 +163,17 @@ abstract class Moderator : CommandExecutor {
 
 
         }
+
+        public fun listsModerator(sender: CommandSender){
+            val file = File("./ops.json").readText()
+            val parsed = Json.decodeFromString<List<Ops>>(file)
+
+            for (p in parsed){
+                sender.sendMessage("${ChatColor.GREEN}${p.name}  ${ChatColor.YELLOW}level: ${ChatColor.AQUA}${p.level}");
+            }
+        }
     }
+
 
 }
 
@@ -165,7 +183,7 @@ class YesNoPrompt(private val plugin: Plugin) {
         val factory = ConversationFactory(plugin)
             .withFirstPrompt(object : StringPrompt() {
                 override fun getPromptText(context: ConversationContext): String {
-                    return "§eはい/いいえを入力してください（yes/no）"
+                    return "§e本当にモデレーター権限を剥奪しますか？（yes/no）"
                 }
 
                 override fun acceptInput(context: ConversationContext, input: String?): Prompt? {
@@ -197,7 +215,7 @@ class YesNoPrompt(private val plugin: Plugin) {
 
 
 @Serializable
-data class Ops(
+public data class Ops(
     val uuid: String,
     val name: String,
     val level: Int,

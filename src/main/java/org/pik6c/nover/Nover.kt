@@ -11,20 +11,11 @@ class Nover : JavaPlugin() {
         logger.info("Welcome to nover plugin (1.0-SNAPSHOT)");
         logger.info("/nv help to get started");
         getCommand("nv")?.setExecutor(NvCommand(this));
+        getCommand("nv")?.tabCompleter = NvCommand(this);
+        getCommand("nv")?.aliases = mutableListOf("nover");
 
+        server.pluginManager.registerEvents(ChatListener(), this)
     }
-
-    // 文字補完だけど、まだ未実装
-    /*
-    override fun onTabComplete(
-        sender: CommandSender,
-        command: Command,
-        alias: String,
-        args: Array<out String>?
-    ): MutableList<String>? {
-
-    }
-    */
 
     override fun onDisable() {
         // Plugin shutdown logic
