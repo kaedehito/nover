@@ -16,6 +16,7 @@ class Nover : JavaPlugin() {
 
         server.pluginManager.registerEvents(joinMessage(), this)
         server.pluginManager.registerEvents(exitMessage(), this)
+        server.pluginManager.registerEvents(ChatFilter(), this)
     }
 
     override fun onDisable() {
