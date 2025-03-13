@@ -14,7 +14,8 @@ class Nover : JavaPlugin() {
         getCommand("nv")?.tabCompleter = NvCommand(this);
         getCommand("nv")?.aliases = mutableListOf("nover");
 
-        server.pluginManager.registerEvents(ChatListener(), this)
+        server.pluginManager.registerEvents(joinMessage(), this)
+        server.pluginManager.registerEvents(exitMessage(), this)
     }
 
     override fun onDisable() {
