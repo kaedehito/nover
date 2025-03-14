@@ -1,0 +1,6 @@
+{
+  "moderatorChat": "{aqua}{name}:{reset} {message}",
+  "defaultChat": "{name}: {message}"
+}
+
+

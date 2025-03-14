@@ -1,4 +1,4 @@
-package org.pik6c.nover
+package org.pik6c.nover.listeners
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
@@ -7,13 +7,12 @@ import org.bukkit.ChatColor
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.AsyncPlayerChatEvent
-import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
 
 class ChatFilter : Listener {
 
-    val parsed: FilterJson by lazy {
+    private val parsed: FilterJson by lazy {
         val filePath = Path.of("./nover/filter.json")
         val dirPath = filePath.parent
 
@@ -53,7 +52,7 @@ class ChatFilter : Listener {
 
         if (found) {
             player.sendMessage("該当箇所：$message")
-            Bukkit.getLogger().info("メッセージがフィルターされました. プレイヤー: ${player.name} フィルター内容: $message");
+            Bukkit.getLogger().info("メッセージがフィルターされました. プレイヤー: ${player.name} フィルター内容: $message")
             event.isCancelled = true
         }
 
