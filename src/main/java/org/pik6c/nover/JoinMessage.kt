@@ -5,14 +5,15 @@ import kotlinx.serialization.json.Json
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
+import org.pik6c.nover.moderator.Moderator.NvCommand.Companion.Ops
 import java.io.File
 import java.nio.file.FileAlreadyExistsException
 import java.nio.file.Paths
 import kotlin.io.path.createDirectory
 
-public class joinMessage : Listener{
+class JoinMessage : Listener{
     @EventHandler
-    public fun onPlayerJoin(e: PlayerJoinEvent){
+    fun onPlayerJoin(e: PlayerJoinEvent){
         val player = e.player
 
 
@@ -22,7 +23,7 @@ public class joinMessage : Listener{
             val path = Paths.get("./nover/")
 
             try {
-                path.createDirectory();
+                path.createDirectory()
             }catch (e: FileAlreadyExistsException){
                 println("Failed to create $path: $e")
             }
@@ -34,22 +35,23 @@ public class joinMessage : Listener{
 
         val joinMessages = file.readText()
 
-        val parsed = parseJson(joinMessages)
+        val parsed = jsonParse(joinMessages)
 
-        if (playerIsModerator(player.name)){
-            e.joinMessage = replaceMessage.replaceMessage(parsed.moderatorJoinMessage.random(), player.name)
-            return;
+        if (playerIsModerator(player.uniqueId.toString())){
+            e.joinMessage = ReplaceMessage.replaceMessage(parsed.moderatorJoinMessage.random(), player.name)
+            return
         }
 
-        e.joinMessage = replaceMessage.replaceMessage(parsed.messages.random(), player.name)
+        e.joinMessage = ReplaceMessage.replaceMessage(parsed.messages.random(), player.name)
     }
 
-    public fun playerIsModerator(user: String): Boolean{
+    fun playerIsModerator(uuid: String): Boolean{
         val ops = Json.decodeFromString<List<Ops>>(File("./ops.json").readText())
 
         ops.forEach {
-            println("User: $it == $user: ${it.name == user}");
-            return it.name == user
+            val eq = it.uuid == uuid
+            println("User: $it == $uuid: $eq")
+            return eq
         }
 
         return false
@@ -57,9 +59,9 @@ public class joinMessage : Listener{
 }
 
 
-fun parseJson(fileContent: String): JoinMessagesJson{
-    val json = Json.decodeFromString<JoinMessagesJson>(fileContent);
-    return json;
+fun jsonParse(fileContent: String): JoinMessagesJson{
+    val json = Json.decodeFromString<JoinMessagesJson>(fileContent)
+    return json
 }
 
 

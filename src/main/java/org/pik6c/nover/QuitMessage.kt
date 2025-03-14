@@ -1,22 +1,16 @@
 package org.pik6c.nover
 
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
-import org.bukkit.ChatColor
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerQuitEvent
 import java.io.File
-import java.nio.file.FileAlreadyExistsException
-import java.nio.file.Paths
-import kotlin.io.path.createDirectory
-import kotlin.io.path.exists
 
-public class exitMessage : Listener{
+class QuitMessage : Listener{
     @EventHandler
     fun onPlayerQuit(e: PlayerQuitEvent){
-        val player = e.player;
+        val player = e.player
 
         val jsonFile = File("./nover/quitMessages.json")
         if (!jsonFile.exists()){
@@ -25,16 +19,16 @@ public class exitMessage : Listener{
             read?.let { jsonFile.writeText(it) }
         }
 
-        val parsed = Json.decodeFromString<quitMessagesJson>(jsonFile.readText());
+        val parsed = Json.decodeFromString<QuitMessagesJson>(jsonFile.readText())
 
-        if(joinMessage().playerIsModerator(player.name)){
+        if(JoinMessage().playerIsModerator(player.uniqueId.toString())){
             val message = parsed.moderatorQuitMessage.random()
-            e.quitMessage = replaceMessage.replaceMessage(message, player.name)
+            e.quitMessage = ReplaceMessage.replaceMessage(message, player.name)
             return
         }
 
         val message = parsed.quitMessage.random()
-        e.quitMessage = replaceMessage.replaceMessage(message, player.name)
+        e.quitMessage = ReplaceMessage.replaceMessage(message, player.name)
         return
 
     }
@@ -43,7 +37,7 @@ public class exitMessage : Listener{
 
 
 @Serializable
-data class quitMessagesJson(
+data class QuitMessagesJson(
     val quitMessage: List<String>,
     val moderatorQuitMessage: List<String> = quitMessage,
 )
