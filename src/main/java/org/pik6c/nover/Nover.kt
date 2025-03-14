@@ -1,6 +1,7 @@
 package org.pik6c.nover
 
 import org.bukkit.plugin.java.JavaPlugin
+import org.pik6c.nover.commands.NvCommand
 import org.pik6c.nover.listeners.ChatColor
 import org.pik6c.nover.listeners.ChatFilter
 import org.pik6c.nover.listeners.JoinMessage

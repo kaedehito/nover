@@ -5,8 +5,8 @@ import kotlinx.serialization.json.Json
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
-import org.pik6c.nover.ReplaceMessage
-import org.pik6c.nover.moderator.Moderator.NvCommand.Companion.Ops
+import org.pik6c.nover.utils.ReplaceMessage
+import org.pik6c.nover.commands.moderator.Moderator.NvCommand.Companion.Ops
 import java.io.File
 import java.nio.file.FileAlreadyExistsException
 import java.nio.file.Paths

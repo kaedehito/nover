@@ -1,4 +1,4 @@
-package org.pik6c.nover.moderator
+package org.pik6c.nover.commands.moderator
 
 import org.bukkit.conversations.ConversationContext
 import org.bukkit.conversations.ConversationFactory

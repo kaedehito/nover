@@ -1,4 +1,4 @@
-package org.pik6c.nover
+package org.pik6c.nover.commands
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.command.Command
@@ -6,8 +6,8 @@ import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.command.TabCompleter
 import org.bukkit.plugin.Plugin
-import org.pik6c.nover.moderator.*
-import org.pik6c.nover.moderator.ModeratorList
+import org.pik6c.nover.commands.moderator.*
+import org.pik6c.nover.commands.moderator.ModeratorList
 
 
 class NvCommand(private val plugin: Plugin) : CommandExecutor , TabCompleter{

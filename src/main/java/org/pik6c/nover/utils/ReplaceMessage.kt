@@ -1,4 +1,4 @@
-package org.pik6c.nover
+package org.pik6c.nover.utils
 
 import org.bukkit.ChatColor
 

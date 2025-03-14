@@ -1,4 +1,4 @@
-package org.pik6c.nover.moderator
+package org.pik6c.nover.commands.moderator
 
 import org.bukkit.ChatColor
 import org.bukkit.command.CommandSender

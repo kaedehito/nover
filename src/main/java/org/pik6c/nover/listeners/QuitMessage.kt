@@ -5,7 +5,7 @@ import kotlinx.serialization.json.Json
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerQuitEvent
-import org.pik6c.nover.ReplaceMessage
+import org.pik6c.nover.utils.ReplaceMessage
 import java.io.File
 
 class QuitMessage : Listener{
