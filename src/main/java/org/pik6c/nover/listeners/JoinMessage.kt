@@ -1,10 +1,11 @@
-package org.pik6c.nover
+package org.pik6c.nover.listeners
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
+import org.pik6c.nover.ReplaceMessage
 import org.pik6c.nover.moderator.Moderator.NvCommand.Companion.Ops
 import java.io.File
 import java.nio.file.FileAlreadyExistsException
@@ -59,7 +60,7 @@ class JoinMessage : Listener{
 }
 
 
-fun jsonParse(fileContent: String): JoinMessagesJson{
+fun jsonParse(fileContent: String): JoinMessagesJson {
     val json = Json.decodeFromString<JoinMessagesJson>(fileContent)
     return json
 }

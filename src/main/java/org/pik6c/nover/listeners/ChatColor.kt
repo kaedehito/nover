@@ -1,4 +1,4 @@
-package org.pik6c.nover
+package org.pik6c.nover.listeners
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
@@ -6,6 +6,7 @@ import org.bukkit.Bukkit
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.AsyncPlayerChatEvent
+import org.pik6c.nover.ReplaceMessage
 import java.nio.file.FileAlreadyExistsException
 import java.nio.file.Files
 import java.nio.file.Path
