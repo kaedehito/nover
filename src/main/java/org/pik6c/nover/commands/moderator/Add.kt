@@ -5,6 +5,7 @@ import kotlinx.serialization.json.Json
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.command.CommandSender
+import org.pik6c.nover.utils.Ops
 import java.io.File
 import java.io.IOException
 
@@ -19,22 +20,23 @@ class Add {
         }
 
         try {
-            // ファイル内容を読み込む
             val fileContent = file.readText()
+            val js = Json { ignoreUnknownKeys = true }
+            val parsed = js.decodeFromString<MutableList<Ops>>(fileContent)
 
-            // JSON をデコード
-            val parsed = Json.decodeFromString<MutableList<Moderator.NvCommand.Companion.Ops>>(fileContent)
 
-
-            val uuid = Bukkit.getPlayer(user)
-            if (uuid == null){
+            val player = Bukkit.getPlayer(user)
+            if (player == null){
                 sender.sendMessage("${ChatColor.RED}[FAILED] UUIDの取得に失敗しました${ChatColor.RESET}")
                 sender.sendMessage("${ChatColor.RED}ユーザー名を間違えていませんか？${ChatColor.RESET}")
                 return
             }
 
+
+            val uuid = player.uniqueId.toString()
+
             for (p in parsed){
-                if (p.name == user){
+                if (p.uuid == uuid){
                     sender.sendMessage("${ChatColor.RED}[FAILED] ユーザーはすでにops.jsonに記入されています！")
                     sender.sendMessage("${ChatColor.RED}権限レベルを変更したい場合は、ops.jsonのlevel: の欄を適切な数値に書き換えてください！")
                     return
@@ -42,7 +44,7 @@ class Add {
             }
 
             // モデレーターの追加
-            parsed += Moderator.NvCommand.Companion.Ops(
+            parsed += Ops(
                 uuid = Bukkit.getPlayer(user)?.uniqueId.toString(),
                 name = user,  // ユーザー名
                 level = 1,  // モデレーターのレベル

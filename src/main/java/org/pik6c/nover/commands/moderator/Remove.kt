@@ -7,6 +7,7 @@ import org.bukkit.ChatColor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
+import org.pik6c.nover.utils.Ops
 import java.io.File
 import java.io.IOException
 
@@ -31,11 +32,10 @@ class Remove {
 
 
         try {
-            // ファイル内容を読み込む
             val fileContent = file.readText()
 
-            // JSON をデコード
-            val parsed = Json.decodeFromString<MutableList<Moderator.NvCommand.Companion.Ops>>(fileContent)
+            val json = Json { ignoreUnknownKeys = true }
+            val parsed = json.decodeFromString<MutableList<Ops>>(fileContent)
 
 
 
@@ -69,28 +69,24 @@ class Remove {
 
     }
 
-    private fun removeMode(uuid: String, sender: CommandSender, parsed: MutableList<Moderator.NvCommand.Companion.Ops>, file: File, plugin: Plugin){
+    private fun removeMode(uuid: String, sender: CommandSender, parsed: MutableList<Ops>, file: File, plugin: Plugin){
         try {
-            // モデレーターの削除
             parsed.removeIf { it.uuid == uuid }
 
-            // JSON 文字列にエンコード
+
             val json = Json { prettyPrint = true }
             val updatedJson = json.encodeToString(parsed)
 
-            // ファイルに書き込む
-            file.writeText(updatedJson)  // 上書き保存
 
-            // メッセージを確実にメインスレッドで送信
+            file.writeText(updatedJson)
+
             Bukkit.getScheduler().runTask(plugin, Runnable {
                 sender.sendMessage("${ChatColor.GREEN}[SUCCESS] ${ChatColor.YELLOW}モデレーターの削除が無事に完了しました")
             })
         } catch (e: Exception) {
-            // エラーログを出力
             println("Error in removeMode: ${e.message}")
             e.printStackTrace()
 
-            // エラーメッセージをメインスレッドで送信
             Bukkit.getScheduler().runTask(plugin, Runnable {
                 sender.sendMessage("${ChatColor.RED}[ERROR] モデレーター削除中にエラーが発生しました: ${e.message}")
             })

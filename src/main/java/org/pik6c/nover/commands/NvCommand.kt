@@ -8,6 +8,10 @@ import org.bukkit.command.TabCompleter
 import org.bukkit.plugin.Plugin
 import org.pik6c.nover.commands.moderator.*
 import org.pik6c.nover.commands.moderator.ModeratorList
+import org.pik6c.nover.commands.user.Kick
+import org.pik6c.nover.commands.user.Kill
+import org.pik6c.nover.commands.user.Tp
+import org.pik6c.nover.commands.user.UserHelp
 
 
 class NvCommand(private val plugin: Plugin) : CommandExecutor , TabCompleter{
@@ -18,7 +22,7 @@ class NvCommand(private val plugin: Plugin) : CommandExecutor , TabCompleter{
         args: Array<out String>
     ): Boolean {
         if (args.isEmpty()) {
-            sender.sendMessage("${ChatColor.BLACK}使用方法: /nv help")
+            sender.sendMessage("${ChatColor.RED}使用方法: /nv help")
             return true
         }
 
@@ -73,8 +77,46 @@ class NvCommand(private val plugin: Plugin) : CommandExecutor , TabCompleter{
                 }
             }
 
+            "user" -> {
+                if(args.size >= 3){
+                    val arg = args[2]
+
+                    when(arg){
+                        "ipban" -> {
+
+                        }
+
+                        "ban" -> {
+
+                        }
+
+                        "kick" -> {
+                            if(args.size == 4){
+                                Kick().KickPlayer(arg, args[3], sender)
+                            }else{
+                                UserHelp.KickArgNotFound(sender)
+                            }
+                        }
+
+                        "kill" -> {
+                            Kill().KillPlayer(args[1], sender)
+                        }
+
+                        "tp" -> {
+                            if(args.size == 4){
+                                Tp().TpPlayer(arg, args[3], sender)
+                            }else{
+                                UserHelp.TpArgNotFound(sender)
+                            }
+                        }
+
+                    }
+
+                }
+            }
+
             "version" -> {
-                sender.sendMessage("${ChatColor.AQUA}Nover ${ChatColor.YELLOW}v1.0${ChatColor.GRAY} PRE-RELEASE")
+                sender.sendMessage("${ChatColor.AQUA}Nover ${ChatColor.YELLOW}v1.3${ChatColor.GRAY} PRE-RELEASE")
                 sender.sendMessage("${ChatColor.DARK_AQUA}NoverはMIT Licenseでライセンスされています")
 
             }
@@ -129,6 +171,17 @@ class NvCommand(private val plugin: Plugin) : CommandExecutor , TabCompleter{
                     completions.add("kick")
                     completions.add("kill")
                     completions.add("tp")
+                }
+            }
+
+            4 -> {
+                if (args[0] == "user" && args[1] == "tp"){
+                    val onlinePlayers = Bukkit.getOnlinePlayers()
+                    for (player in onlinePlayers){
+                        if (player.name.startsWith(args[2], ignoreCase = true)) {
+                            completions.add(player.name)
+                        }
+                    }
                 }
             }
         }

@@ -5,59 +5,75 @@ import kotlinx.serialization.json.Json
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
+import org.pik6c.nover.utils.Ops
+import org.pik6c.nover.utils.OpsCache
 import org.pik6c.nover.utils.ReplaceMessage
-import org.pik6c.nover.commands.moderator.Moderator.NvCommand.Companion.Ops
 import java.io.File
 import java.nio.file.FileAlreadyExistsException
+import java.nio.file.FileSystems
 import java.nio.file.Paths
+import java.nio.file.StandardWatchEventKinds
 import kotlin.io.path.createDirectory
 
 class JoinMessage : Listener{
     @EventHandler
     fun onPlayerJoin(e: PlayerJoinEvent){
         val player = e.player
+        val parsed = JoinMessageAsync.getJoinMessage()
 
-
-        val file = File("./nover/joinMessages.json")
-
-        if (!file.exists()){
-            val path = Paths.get("./nover/")
-
-            try {
-                path.createDirectory()
-            }catch (e: FileAlreadyExistsException){
-                println("Failed to create $path: $e")
-            }
-
-            val inputStream = {}.javaClass.classLoader.getResourceAsStream("joinMessages.json")
-            val read = inputStream?.bufferedReader().use { it?.readText() }
-            read?.let { file.writeText(it) }
-        }
-
-        val joinMessages = file.readText()
-
-        val parsed = jsonParse(joinMessages)
-
-        if (playerIsModerator(player.uniqueId.toString())){
+        if (OpsCache.isModerator(player.uniqueId.toString())){
             e.joinMessage = ReplaceMessage.replaceMessage(parsed.moderatorJoinMessage.random(), player.name)
             return
         }
 
         e.joinMessage = ReplaceMessage.replaceMessage(parsed.messages.random(), player.name)
     }
-
-    fun playerIsModerator(uuid: String): Boolean{
-        val ops = Json.decodeFromString<List<Ops>>(File("./ops.json").readText())
-
-        ops.forEach {
-            val eq = it.uuid == uuid
-            println("User: $it == $uuid: $eq")
-            return eq
-        }
-
-        return false
-    }
 }
+
+object JoinMessageAsync{
+    private val quitMessageFile = File("./nover/JoinMessages.json")
+    private var joinFormat: JoinMessagesJson = loadJoinMessage()
+    private val watchService = FileSystems.getDefault().newWatchService()
+
+    init {
+        Thread { watchFileChanges() }.start()
+    }
+
+    private fun loadJoinMessage(): JoinMessagesJson {
+        return if (quitMessageFile.exists()) {
+            val json = Json { ignoreUnknownKeys = true }
+            json.decodeFromString<JoinMessagesJson>(quitMessageFile.readText())
+        } else {
+            val inputStream = {}.javaClass.classLoader.getResourceAsStream("JoinMessages.json")
+            val text = inputStream?.bufferedReader()?.readText()
+            text?.let { quitMessageFile.writeText(it) }
+            val json = Json { ignoreUnknownKeys = true }
+            json.decodeFromString<JoinMessagesJson>(quitMessageFile.readText())
+        }
+    }
+
+    private fun watchFileChanges() {
+        val path = quitMessageFile.toPath().parent
+        path.register(watchService, StandardWatchEventKinds.ENTRY_MODIFY)
+
+        while (true) {
+            val key = watchService.take()
+            for (event in key.pollEvents()) {
+                if (event.context().toString() == quitMessageFile.name) {
+                    joinFormat = loadJoinMessage()
+                    println("./nover/JoinMessages.json のキャッシュを更新しました")
+                }
+            }
+            key.reset()
+        }
+    }
+
+    fun getJoinMessage(): JoinMessagesJson{
+        return joinFormat
+    }
+
+}
+
 
 
 fun jsonParse(fileContent: String): JoinMessagesJson {
