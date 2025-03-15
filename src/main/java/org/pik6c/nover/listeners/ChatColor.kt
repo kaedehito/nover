@@ -6,52 +6,70 @@ import org.bukkit.Bukkit
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.AsyncPlayerChatEvent
+import org.pik6c.nover.utils.Ops
+import org.pik6c.nover.utils.OpsCache
 import org.pik6c.nover.utils.ReplaceMessage
-import java.nio.file.FileAlreadyExistsException
-import java.nio.file.Files
-import java.nio.file.Path
+import java.io.File
+import java.nio.file.*
 
 
-class ChatColor : Listener{
-
-    private val parsed: ChatFormat by lazy {
-        val jsonFile = Path.of("./nover/chatFormat.json")
-        val dir = jsonFile.parent
-
-
-        try {
-            Files.createDirectory(dir)
-        }catch (e: FileAlreadyExistsException){
-            println("Failed to create nover directory: $e")
-        }
-
-        val file = jsonFile.toFile()
-
-        if (!file.exists()){
-            {}.javaClass.classLoader.getResourceAsStream("chatFormat.json")?.use { input ->
-                file.writeText(input.bufferedReader().readText())
-            }
-        }
-
-        val parsed = Json.decodeFromString<ChatFormat>(file.readText())
-
-        Bukkit.getLogger().info("フォーマットを読み込みました: $parsed")
-        parsed
-    }
-
+class ChatColor : Listener {
 
     @EventHandler
-    fun onPlayerChat(event: AsyncPlayerChatEvent){
+    fun onPlayerChat(event: AsyncPlayerChatEvent) {
         val player = event.player
         val message = event.message
+        val chatFormat = ChatFormatJson.getFormat()
 
-        if (JoinMessage().playerIsModerator(player.uniqueId.toString())){
-            event.format = ReplaceMessage.replaceMessage(parsed.moderatorChat, player.name, message)
-            return
+        val format = if (OpsCache.isModerator(player.uniqueId.toString())) {
+            chatFormat.moderatorChat
+        } else {
+            chatFormat.defaultChat
         }
 
-        event.format = ReplaceMessage.replaceMessage(parsed.defaultChat, player.name, message)
-        return
+        event.format = ReplaceMessage.replaceMessage(format, player.name, message)
+    }
+
+}
+
+object ChatFormatJson{
+    private val formatFile = File("./nover/ChatFormat.json")
+    private var format: ChatFormat = loadFormat()
+    private val watchService = FileSystems.getDefault().newWatchService()
+
+    init {
+        Thread { watchFileChanges() }.start()
+    }
+
+    private fun loadFormat(): ChatFormat {
+        return if (formatFile.exists()) {
+            Json.decodeFromString<ChatFormat>(formatFile.readText())
+        } else {
+            val inputStream = {}.javaClass.classLoader.getResourceAsStream("ChatFormat.json")
+            val text = inputStream?.bufferedReader()?.readText()
+            text?.let { formatFile.writeText(it) }
+            Json.decodeFromString<ChatFormat>(formatFile.readText())
+        }
+    }
+
+    private fun watchFileChanges() {
+        val path = formatFile.toPath().parent
+        path.register(watchService, StandardWatchEventKinds.ENTRY_MODIFY)
+
+        while (true) {
+            val key = watchService.take()
+            for (event in key.pollEvents()) {
+                if (event.context().toString() == formatFile.name) {
+                    format = loadFormat()
+                    println("./nover/ChatFormat.json のキャッシュを更新しました")
+                }
+            }
+            key.reset()
+        }
+    }
+
+    fun getFormat(): ChatFormat{
+        return format
     }
 
 }

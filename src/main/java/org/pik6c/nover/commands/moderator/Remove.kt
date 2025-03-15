@@ -7,6 +7,7 @@ import org.bukkit.ChatColor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
+import org.pik6c.nover.utils.Ops
 import java.io.File
 import java.io.IOException
 
@@ -35,7 +36,7 @@ class Remove {
             val fileContent = file.readText()
 
             // JSON をデコード
-            val parsed = Json.decodeFromString<MutableList<Moderator.NvCommand.Companion.Ops>>(fileContent)
+            val parsed = Json.decodeFromString<MutableList<Ops>>(fileContent)
 
 
 
@@ -69,7 +70,7 @@ class Remove {
 
     }
 
-    private fun removeMode(uuid: String, sender: CommandSender, parsed: MutableList<Moderator.NvCommand.Companion.Ops>, file: File, plugin: Plugin){
+    private fun removeMode(uuid: String, sender: CommandSender, parsed: MutableList<Ops>, file: File, plugin: Plugin){
         try {
             // モデレーターの削除
             parsed.removeIf { it.uuid == uuid }

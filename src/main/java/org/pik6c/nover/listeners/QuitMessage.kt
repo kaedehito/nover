@@ -5,24 +5,20 @@ import kotlinx.serialization.json.Json
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerQuitEvent
+import org.pik6c.nover.utils.OpsCache
 import org.pik6c.nover.utils.ReplaceMessage
 import java.io.File
+import java.nio.file.FileSystems
+import java.nio.file.StandardWatchEventKinds
 
 class QuitMessage : Listener{
     @EventHandler
     fun onPlayerQuit(e: PlayerQuitEvent){
         val player = e.player
 
-        val jsonFile = File("./nover/quitMessages.json")
-        if (!jsonFile.exists()){
-            val inputStream = {}.javaClass.classLoader.getResourceAsStream("quitMessages.json")
-            val read = inputStream?.bufferedReader().use { it?.readText() }
-            read?.let { jsonFile.writeText(it) }
-        }
 
-        val parsed = Json.decodeFromString<QuitMessagesJson>(jsonFile.readText())
-
-        if(JoinMessage().playerIsModerator(player.uniqueId.toString())){
+        val parsed = QuitMessageAsync.getQuitMessage()
+        if(OpsCache.isModerator(player.uniqueId.toString())){
             val message = parsed.moderatorQuitMessage.random()
             e.quitMessage = ReplaceMessage.replaceMessage(message, player.name)
             return
@@ -35,6 +31,48 @@ class QuitMessage : Listener{
     }
 }
 
+
+object QuitMessageAsync{
+    private val quitMessageFile = File("./nover/QuitMessages.json")
+    private var quitFormat: QuitMessagesJson = loadQuitMessage()
+    private val watchService = FileSystems.getDefault().newWatchService()
+
+    init {
+        Thread { watchFileChanges() }.start()
+    }
+
+    private fun loadQuitMessage(): QuitMessagesJson {
+        return if (quitMessageFile.exists()) {
+            Json.decodeFromString<QuitMessagesJson>(quitMessageFile.readText())
+        } else {
+            val inputStream = {}.javaClass.classLoader.getResourceAsStream("QuitMessages.json")
+            val text = inputStream?.bufferedReader()?.readText()
+            text?.let { quitMessageFile.writeText(it) }
+            Json.decodeFromString<QuitMessagesJson>(quitMessageFile.readText())
+        }
+    }
+
+    private fun watchFileChanges() {
+        val path = quitMessageFile.toPath().parent
+        path.register(watchService, StandardWatchEventKinds.ENTRY_MODIFY)
+
+        while (true) {
+            val key = watchService.take()
+            for (event in key.pollEvents()) {
+                if (event.context().toString() == quitMessageFile.name) {
+                    quitFormat = loadQuitMessage()
+                    println("./nover/QuitMessages.json のキャッシュを更新しました")
+                }
+            }
+            key.reset()
+        }
+    }
+
+    fun getQuitMessage(): QuitMessagesJson{
+        return quitFormat
+    }
+
+}
 
 
 @Serializable
