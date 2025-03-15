@@ -41,12 +41,14 @@ object JoinMessageAsync{
 
     private fun loadJoinMessage(): JoinMessagesJson {
         return if (quitMessageFile.exists()) {
-            Json.decodeFromString<JoinMessagesJson>(quitMessageFile.readText())
+            val json = Json { ignoreUnknownKeys = true }
+            json.decodeFromString<JoinMessagesJson>(quitMessageFile.readText())
         } else {
-            val inputStream = {}.javaClass.classLoader.getResourceAsStream("QuitMessages.json")
+            val inputStream = {}.javaClass.classLoader.getResourceAsStream("JoinMessages.json")
             val text = inputStream?.bufferedReader()?.readText()
             text?.let { quitMessageFile.writeText(it) }
-            Json.decodeFromString<JoinMessagesJson>(quitMessageFile.readText())
+            val json = Json { ignoreUnknownKeys = true }
+            json.decodeFromString<JoinMessagesJson>(quitMessageFile.readText())
         }
     }
 

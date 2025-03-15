@@ -25,7 +25,8 @@ class ChatFilter : Listener {
             }
         }
 
-        val parsed = Json.decodeFromString<FilterJson>(file.readText())
+        val json = Json { ignoreUnknownKeys = true }
+        val parsed = json.decodeFromString<FilterJson>(file.readText())
 
         // ログを出力（デバッグ用）
         Bukkit.getLogger().info("[nover] フィルターを読み込みました：${parsed.filterMessages}")

@@ -22,7 +22,7 @@ class NvCommand(private val plugin: Plugin) : CommandExecutor , TabCompleter{
         args: Array<out String>
     ): Boolean {
         if (args.isEmpty()) {
-            sender.sendMessage("${ChatColor.BLACK}使用方法: /nv help")
+            sender.sendMessage("${ChatColor.RED}使用方法: /nv help")
             return true
         }
 

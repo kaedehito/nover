@@ -20,11 +20,9 @@ class Add {
         }
 
         try {
-            // ファイル内容を読み込む
             val fileContent = file.readText()
-
-            // JSON をデコード
-            val parsed = Json.decodeFromString<MutableList<Ops>>(fileContent)
+            val js = Json { ignoreUnknownKeys = true }
+            val parsed = js.decodeFromString<MutableList<Ops>>(fileContent)
 
 
             val player = Bukkit.getPlayer(user)

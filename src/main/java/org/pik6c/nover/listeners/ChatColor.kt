@@ -43,12 +43,14 @@ object ChatFormatJson{
 
     private fun loadFormat(): ChatFormat {
         return if (formatFile.exists()) {
-            Json.decodeFromString<ChatFormat>(formatFile.readText())
+            val json = Json { ignoreUnknownKeys = true }
+            json.decodeFromString<ChatFormat>(formatFile.readText())
         } else {
             val inputStream = {}.javaClass.classLoader.getResourceAsStream("ChatFormat.json")
             val text = inputStream?.bufferedReader()?.readText()
             text?.let { formatFile.writeText(it) }
-            Json.decodeFromString<ChatFormat>(formatFile.readText())
+            val json = Json { ignoreUnknownKeys = true }
+            json.decodeFromString<ChatFormat>(formatFile.readText())
         }
     }
 

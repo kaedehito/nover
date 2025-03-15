@@ -16,7 +16,8 @@ object OpsCache {
 
     private fun loadOps(): Set<String> {
         return if (opsFile.exists()) {
-            Json.decodeFromString<List<Ops>>(opsFile.readText()).map { it.uuid }.toSet()
+            val json = Json { ignoreUnknownKeys = true }
+            json.decodeFromString<List<Ops>>(opsFile.readText()).map { it.uuid }.toSet()
         } else emptySet()
     }
 

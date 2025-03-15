@@ -43,12 +43,14 @@ object QuitMessageAsync{
 
     private fun loadQuitMessage(): QuitMessagesJson {
         return if (quitMessageFile.exists()) {
-            Json.decodeFromString<QuitMessagesJson>(quitMessageFile.readText())
+            val json = Json { ignoreUnknownKeys = true }
+            json.decodeFromString<QuitMessagesJson>(quitMessageFile.readText())
         } else {
             val inputStream = {}.javaClass.classLoader.getResourceAsStream("QuitMessages.json")
             val text = inputStream?.bufferedReader()?.readText()
             text?.let { quitMessageFile.writeText(it) }
-            Json.decodeFromString<QuitMessagesJson>(quitMessageFile.readText())
+            val json = Json { ignoreUnknownKeys = true }
+            json.decodeFromString<QuitMessagesJson>(quitMessageFile.readText())
         }
     }
 
